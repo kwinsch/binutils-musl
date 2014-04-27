@@ -1,0 +1,79 @@
+Source: binutils-musl
+Section: devel
+Priority: extra
+Maintainer: Kevin Bortis <pkgs@bortis.ch>
+Build-Depends:
+ binutils-source,
+ debhelper (>= 8.0.0),
+ autotools-dev,
+ bison,
+ flex,
+ gettext,
+ texinfo,
+ dejagnu (>= 1.4.2-1.1),
+ python3,
+ file,
+ xz-utils,
+ lsb-release,
+ zlib1g-dev
+Standards-Version: 3.9.5
+HomePage: https://sourceware.org/binutils/
+Vcs-Git: https://github.com/wermut/binutils-musl.git
+Vcs-Browser: https://github.com/wermut/binutils-musl/
+
+Package: binutils-aarch64-linux-musl
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GNU assembler, linker and binary utilities for aarch64-linux-musle target
+ It is meant to be used for cross compiling programs with musl as the C-library.
+ The programs in this package are used to manipulate binary and object
+ files that may have been created for aarch64-linux-musl target.
+
+Package: binutils-arm-linux-musleabi
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GNU assembler, linker and binary utilities for arm-linux-musleabi target
+ It is meant to be used for cross compiling programs with musl as the C-library.
+ The programs in this package are used to manipulate binary and object
+ files that may have been created for arm-linux-musleabi target.
+
+Package: binutils-arm-linux-musleabihf
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GNU assembler, linker and binary utilities for arm-linux-musleabihf target
+ It is meant to be used for cross compiling programs with musl as the C-library.
+ The programs in this package are used to manipulate binary and object
+ files that may have been created for arm-linux-musleabihf target.
+
+Package: binutils-i386-linux-musl
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GNU assembler, linker and binary utilities for i386-linux-musl target
+ It is meant to be used for cross compiling programs with musl as the C-library.
+ The programs in this package are used to manipulate binary and object
+ files that may have been created for i386-linux-musl target.
+
+Package: binutils-x86-64-linux-musl
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GNU assembler, linker and binary utilities for x86_64-linux-musl target
+ It is meant to be used for cross compiling programs with musl as the C-library.
+ The programs in this package are used to manipulate binary and object
+ files that may have been created for x86_64-linux-musl target.
+
+Package: binutils-mips-linux-musl
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GNU assembler, linker and binary utilities for mips-linux-musl target
+ It is meant to be used for cross compiling programs with musl as the C-library.
+ The programs in this package are used to manipulate binary and object
+ files that may have been created for mips-linux-musl target.
+
+Package: binutils-mipsel-linux-musl
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: GNU assembler, linker and binary utilities for mipsel-linux-musl target
+ It is meant to be used for cross compiling programs with musl as the C-library.
+ The programs in this package are used to manipulate binary and object
+ files that may have been created for mipsel-linux-musl target.
+

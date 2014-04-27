@@ -1,0 +1,82 @@
+#!/usr/bin/make -f
+export DH_VERBOSE=1
+
+targets = 	aarch64-linux-musl \
+		arm-linux-musleabihf \
+		arm-linux-musleabi \
+		i386-linux-musl \
+		x86_64-linux-musl \
+		mips-linux-musl \
+		mipsel-linux-musl 
+
+top_dir=$(shell pwd)
+build_dir = $(top_dir)/build
+binutils_dir=/usr/src/binutils
+stampdir=debian/stamp
+
+source_version := $(shell dpkg-query -W -f="\$${Version}\n" binutils-source)
+deb_version := $(source_version)+$(shell dpkg-parsechangelog | sed -ne "s/^Version: \(.*\)/\1/p")
+deb_upstream_version := $(shell echo $(deb_version) | cut -d- -f1)
+base_version := $(shell echo $(deb_version) | sed -e 's/\([1-9]\.[0-9]\).*-.*/\1/')
+
+upstream_dir=binutils-$(deb_upstream_version)
+
+unpack_stamp=$(stampdir)/unpack
+
+buildflags=$(shell dpkg-buildflags --export=configure)
+
+configure_flags = \
+	--prefix=/usr/lib \
+	--bindir=/usr/bin \
+	--mandir=/usr/share/man \
+	--disable-nls \
+	--enable-plugins \
+	--enable-interwork \
+	"--with-pkgversion=$(deb_version)" \
+	$(buildflags)
+
+%:
+	for target in $(targets); do \
+		dh $@ -D$(upstream_dir) -B$(build_dir)/$$target --with autotools-dev --parallel; \
+	done
+
+$(unpack_stamp):
+	tar xf $(binutils_dir)/binutils-*.tar.*
+	mkdir -p $(stampdir)
+	cp /usr/share/doc/binutils-source/copyright debian/copyright
+	touch $@
+
+override_dh_auto_configure: $(unpack_stamp)
+	for target in $(targets); do echo $$target ; case $$target in x86_64*) target_dest=x86-64-linux-musl;; esac; echo $$target_dest; done;
+	for target in $(targets); do \
+		dh_auto_configure -B$(build_dir)/$$target -D$(upstream_dir) -- \
+				  --target=$$target \
+				  --libdir=/usr/lib/$$target \
+                                  --infodir=/usr/share/doc/binutils-$$target/info \
+                                  --htmldir=/usr/share/doc/binutils-$$target/html \
+                                  --pdfdir=/usr/share/doc/binutils-$$target/pdf \
+				  $(configure_flags); \
+	done 
+
+override_dh_auto_build:
+	for target in $(targets); do \
+		dh_auto_build -B$(build_dir)/$$target -D$(upstream_dir); \
+	done
+
+override_dh_auto_install:
+	for target in $(targets); do \
+		case $$target in \
+			x86_64*) target_dest=x86-64-linux-musl;; \
+			*) target_dest=$$target;; \
+		esac; \
+		dh_auto_install -B$(build_dir)/$$target --destdir debian/binutils-$$target_dest; \
+	done 
+
+override_dh_gencontrol:
+	dh_gencontrol -a -- -v$(deb_version) -Vlocal:Version=$(deb_upstream_version) -Vbinutils:Version=$(source_version)
+
+override_dh_auto_clean:
+	rm -rf $(upstream_dir) $(build_dir) $(stampdir)
+
+override_dh_installchangelogs:
+	dh_installchangelogs $(upstream_dir)/ChangeLog
